@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Hub - Prime Arena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@300;600&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Dark Theme (Default) */
+            --primary: #00d2ff;
+            --secondary: #e94560;
+            --accent: #ffd700;
+            --bg: #0a0a12;
+            --card-bg: rgba(22, 33, 62, 0.8);
+            --neon-blue: rgba(0, 210, 255, 0.5);
+            --neon-pink: rgba(233, 69, 96, 0.5);
+            --text: #ffffff;
+            --text-muted: #888888;
+            --grid-color: rgba(0, 210, 255, 0.05);
+            --grad-1: rgba(0, 210, 255, 0.1);
+            --grad-2: rgba(233, 69, 96, 0.1);
+        }
+
+        [data-theme="light"] {
+            --primary: #007bff;
+            --secondary: #dc3545;
+            --accent: #f39c12;
+            --bg: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --neon-blue: rgba(0, 123, 255, 0.2);
+            --neon-pink: rgba(220, 53, 69, 0.2);
+            --text: #212529;
+            --text-muted: #6c757d;
+            --grid-color: rgba(0, 0, 0, 0.05);
+            --grad-1: rgba(0, 123, 255, 0.05);
+            --grad-2: rgba(220, 53, 69, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 20% 30%, var(--grad-1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, var(--grad-2) 0%, transparent 40%),
+                var(--bg);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Animated Background Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg) translateY(-200px);
+            z-index: -1;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 0 1000px;
+            }
+        }
+
+        /* CRT Scanline Effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.03) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            background-size: 100% 4px;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0.15;
+            animation: scan 10s linear infinite;
+        }
+
+        @keyframes scan {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(100%);
+            }
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            z-index: 10;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .retro-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-shadow: 5px 5px 0px var(--secondary);
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            animation: flicker 4s infinite;
+        }
+
+        @keyframes flicker {
+
+            0%,
+            18%,
+            22%,
+            25%,
+            53%,
+            57%,
+            100% {
+                text-shadow: 5px 5px 0px var(--secondary), 0 0 10px var(--primary);
+                opacity: 1;
+            }
+
+            20%,
+            24%,
+            55% {
+                text-shadow: none;
+                opacity: 0.8;
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .stats-bar {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .leaderboard-btn,
+        .share-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .leaderboard-btn:hover,
+        .share-btn:hover {
+            background: var(--grad-1);
+            border-color: var(--grad-1);
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--grad-1);
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--grad-1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 10000;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--neon-blue);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 25px var(--primary);
+        }
+
+        .hero-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 100px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: var(--text);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                float 6s ease-in-out infinite;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Staggered Delay for Cards */
+        .game-card:nth-child(1) {
+            animation-delay: 0.1s, 0s;
+        }
+
+        .game-card:nth-child(2) {
+            animation-delay: 0.2s, 0.5s;
+        }
+
+        .game-card:nth-child(3) {
+            animation-delay: 0.3s, 1s;
+        }
+
+        .game-card:nth-child(4) {
+            animation-delay: 0.4s, 1.5s;
+        }
+
+        .game-card:nth-child(5) {
+            animation-delay: 0.5s, 2s;
+        }
+
+        .game-card:nth-child(6) {
+            animation-delay: 0.6s, 2.5s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.03) !important;
+            border-color: var(--color, var(--primary));
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--glow, var(--neon-blue));
+            animation-play-state: paused;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, var(--glow, var(--neon-blue)) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        .game-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .game-icon {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover .game-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .game-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: var(--color, var(--primary));
+        }
+
+        .game-desc {
+            font-size: 0.95rem;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .play-btn {
+            background: var(--color, var(--primary));
+            color: var(--bg);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover .play-btn {
+            box-shadow: 0 0 15px var(--color, var(--primary));
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 40px;
+            color: #444;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--primary);
+        }
+
+        /* Custom Colors for Games */
+        .color-snake {
+            --color: #00ff00;
+            --glow: rgba(0, 255, 0, 0.3);
+        }
+
+        .color-pong {
+            --color: #00d2ff;
+            --glow: rgba(0, 210, 255, 0.3);
+        }
+
+        .color-tetris {
+            --color: #ff00ff;
+            --glow: rgba(255, 0, 255, 0.3);
+        }
+
+        .color-chess {
+            --color: #ffffff;
+            --glow: rgba(255, 255, 255, 0.2);
+        }
+
+        .color-guess {
+            --color: #ffd700;
+            --glow: rgba(255, 215, 0, 0.3);
+        }
+
+        .color-checkers {
+            --color: #e94560;
+            --glow: rgba(233, 69, 96, 0.3);
+        }
+
+        .color-hockey {
+            --color: #00d2ff;
+            --glow: rgba(0, 210, 255, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+    <div class="scanline"></div>
+
+    <button class="theme-toggle" id="theme-toggle" title="Toggle Light/Dark Mode">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <header>
+        <div class="retro-title">ARCADE HUB</div>
+        <div class="subtitle">Premium Gaming Suite v2.0</div>
+
+        <div class="stats-bar">
+            <a href="/leaderboard" class="leaderboard-btn">
+                <i class="fas fa-trophy"></i> GLOBAL LEADERBOARD
+            </a>
+            <button class="share-btn" onclick="shareGame()">
+                <i class="fas fa-share-alt"></i> SHARE HUB
+            </button>
+        </div>
+    </header>
+
+    <div class="hero-container">
+        <!-- Snake -->
+        <a href="/game/snake" class="game-card color-snake">
+            <div class="game-icon">🐍</div>
+            <div class="game-name">NEON SNAKE</div>
+            <div class="game-desc">A premium overhaul of the classic. Features dynamic speed, particles, and super food
+                orbs.</div>
+            <div class="play-btn">COIN START</div>
+        </a>
+
+        <!-- Pong -->
+        <a href="/game/pong" class="game-card color-pong">
+            <div class="game-icon">🏓</div>
+            <div class="game-name">NEON PONG</div>
+            <div class="game-desc">Classic paddle battle with a futuristic twist. Play solo vs AI or locally with a
+                friend.</div>
+            <div class="play-btn">COIN START</div>
+        </a>
+
+        <!-- Tetris -->
+        <a href="/game/tetris" class="game-card color-tetris">
+            <div class="game-icon">🧱</div>
+            <div class="game-name">TETRIS</div>
+            <div class="game-desc">Stack the blocks and clear the lines. The timeless puzzle masterpiece in a retro
+                aesthetic.</div>
+            <div class="play-btn">COIN START</div>
+        </a>
+
+        <!-- Chess -->
+        <a href="/game/chess" class="game-card color-chess">
+            <div class="game-icon">♟️</div>
+            <div class="game-name">CHESS PRO</div>
+            <div class="game-desc">Full Stockfish-powered chess engine. Choose your difficulty and master the sixty-four
+                squares.</div>
+            <div class="play-btn">COIN START</div>
+        </a>
+
+        <!-- Guessing Game -->
+        <a href="/game/guess" class="game-card color-guess">
+            <div class="game-icon">❓</div>
+            <div class="game-name">QUICK GUESS</div>
+            <div class="game-desc">Can you guess the hidden number? A fast-paced reflex and logic mini-game.</div>
+            <div class="play-btn">COIN START</div>
+        </a>
+
+        <!-- Checkers -->
+        <a href="/game/checkers" class="game-card color-checkers">
+            <div class="game-icon">🔴</div>
+            <div class="game-name">CHECKERS</div>
+            <div class="game-desc">Battle for the board. Now featuring the "Kings Rule" for deep strategic gameplay.
+            </div>
+            <div class="play-btn">COIN START</div>
+        </a>
+
+        <!-- Air Hockey -->
+        <a href="/game/hockey" class="game-card color-hockey">
+            <div class="game-icon">🏒</div>
+            <div class="game-name">AIR HOCKEY</div>
+            <div class="game-desc">High-speed physics-based puck battle. Face off against an elite AI in Strike
+                Arena.</div>
+            <div class="play-btn">COIN START</div>
+        </a>
+    </div>
+
+    <footer>
+        <p>PROJECT ANTIGRAVITY ARCADE &bull; 2026</p>
+    </footer>
+
+    <div id="toast">Link copied to clipboard!</div>
+
+    <script>
+        function shareGame() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            });
+        }
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = '<i class="fas fa-sun"></i>';
+        const moonIcon = '<i class="fas fa-moon"></i>';
+
+        // Check for saved theme preference
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        themeToggle.innerHTML = currentTheme === 'light' ? moonIcon : sunIcon;
+
+        themeToggle.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            let newTheme = theme === 'light' ? 'dark' : 'light';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            // Toggle icon
+            themeToggle.innerHTML = newTheme === 'light' ? moonIcon : sunIcon;
+
+            // Add a little pop effect
+            themeToggle.style.transform = 'scale(1.2) rotate(180deg)';
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+            }, 300);
+        });
+    </script>
+</body>
+
+</html>

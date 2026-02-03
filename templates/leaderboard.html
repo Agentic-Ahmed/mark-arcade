@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Leaderboard - Arcade Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #e94560;
+            --accent: #ffd700;
+            --bg: #1a1a2e;
+            --panel: #16213e;
+            --text: #fff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(233, 69, 96, 0.05) 0%, transparent 40%),
+                #0a0a12;
+        }
+
+        /* Shared Arcade Animations */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg) translateY(-200px);
+            z-index: -1;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 0 1000px;
+            }
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0) 100%);
+            background-size: 100% 4px;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0.15;
+            animation: scan 10s linear infinite;
+        }
+
+        @keyframes scan {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(100%);
+            }
+        }
+
+        h1 {
+            color: var(--primary);
+            text-shadow: 4px 4px var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 50px;
+            text-align: center;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #533483;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        .leaderboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .game-section {
+            background: rgba(22, 33, 62, 0.82);
+            border: 3px solid var(--secondary);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: sectionEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes sectionEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .game-section:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(233, 69, 96, 0.3);
+            border-color: var(--primary);
+        }
+
+        .game-title {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.6rem;
+        }
+
+        th {
+            text-align: left;
+            color: var(--primary);
+            padding: 10px 5px;
+        }
+
+        td {
+            padding: 12px 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rank {
+            color: var(--secondary);
+            width: 40px;
+        }
+
+        .score {
+            text-align: right;
+            color: var(--primary);
+        }
+
+        .no-data {
+            text-align: center;
+            color: #555;
+            padding: 20px;
+            font-size: 0.6rem;
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+    <div class="scanline"></div>
+
+    <a href="/" class="back-btn">
+        < BACK</a>
+            <h1>GLOBAL LEADERBOARDS</h1>
+
+            <div id="loader" class="loader"></div>
+            <div class="leaderboard-grid" id="leaderboard-container"></div>
+
+            <script>
+                async function fetchLeaderboards() {
+                    try {
+                        const response = await fetch('/api/leaderboard/all');
+                        const data = await response.json();
+                        renderLeaderboards(data);
+                        document.getElementById('loader').style.display = 'none';
+                    } catch (error) {
+                        console.error('Error fetching leaderboards:', error);
+                        document.getElementById('leaderboard-container').innerHTML = '<div class="no-data">Failed to load scores.</div>';
+                    }
+                }
+
+                function renderLeaderboards(data) {
+                    const container = document.getElementById('leaderboard-container');
+                    container.innerHTML = '';
+
+                    if (Object.keys(data).length === 0) {
+                        container.innerHTML = '<div class="no-data" style="grid-column: 1/-1">NO SCORES RECORDED YET. GET PLAYING!</div>';
+                        return;
+                    }
+
+                    let delay = 0.1;
+                    for (const [game, scores] of Object.entries(data)) {
+                        const section = document.createElement('div');
+                        section.className = 'game-section';
+                        section.style.animationDelay = `${delay}s`;
+                        delay += 0.1;
+
+                        let tableHtml = `
+                    <div class="game-title">${game.replace('-', ' ')}</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="rank">#</th>
+                                <th>PLAYER</th>
+                                <th class="score">SCORE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                        if (scores.length === 0) {
+                            tableHtml += `<tr><td colspan="3" class="no-data">No scores yet</td></tr>`;
+                        } else {
+                            scores.forEach((entry, index) => {
+                                tableHtml += `
+                            <tr>
+                                <td class="rank">${index + 1}</td>
+                                <td>${entry.player}</td>
+                                <td class="score">${entry.score.toLocaleString()}</td>
+                            </tr>
+                        `;
+                            });
+                        }
+
+                        tableHtml += `
+                        </tbody>
+                    </table>
+                `;
+
+                        section.innerHTML = tableHtml;
+                        container.appendChild(section);
+                    }
+                }
+
+                fetchLeaderboards();
+            </script>
+</body>
+
+</html>
