@@ -6,9 +6,11 @@ import time
 import threading
 from mp3_downloader import process_url
 
-app = Flask(__name__)
-DOWNLOAD_FOLDER = 'downloads'
-DB_PATH = 'scores.db'
+# Check if running on Vercel
+IS_VERCEL = "VERCEL" in os.environ
+
+DOWNLOAD_FOLDER = '/tmp/downloads' if IS_VERCEL else 'downloads'
+DB_PATH = '/tmp/scores.db' if IS_VERCEL else 'scores.db'
 ENGINES_FOLDER = 'engines'
 
 # Ensure directories exist
@@ -162,11 +164,18 @@ def checkers():
 
 @app.route('/game/hockey')
 def hockey():
+    # Render static version if on Vercel to avoid potential issues
     return render_template('hockey.html')
 
 @app.route('/game/tic-tac-toe')
 def tic_tac_toe():
     return render_template('tic-tac-toe.html')
+
+# Vercel needs the 'app' object, but we wrap the init logic
+if not os.path.exists(DOWNLOAD_FOLDER):
+    os.makedirs(DOWNLOAD_FOLDER)
+
+init_db()
 
 @app.route('/leaderboard')
 def leaderboard_page():
