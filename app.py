@@ -164,6 +164,10 @@ def checkers():
 def hockey():
     return render_template('hockey.html')
 
+@app.route('/game/tic-tac-toe')
+def tic_tac_toe():
+    return render_template('tic-tac-toe.html')
+
 @app.route('/leaderboard')
 def leaderboard_page():
     return render_template('leaderboard.html')
