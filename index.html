@@ -33,11 +33,7 @@
             --font-body: 'Space Mono', monospace;
         }
 
-        [data-theme="dark"] {
-            --bg: #1a1a1a;
-            --text: #ffffff;
-            --border-color: #ffffff;
-        }
+
 
         * {
             box-sizing: border-box;
@@ -88,10 +84,7 @@
             transform: rotate(-2deg);
         }
 
-        [data-theme="dark"] .retro-title {
-            background: var(--primary);
-            color: #000;
-        }
+
 
         .subtitle {
             font-family: var(--font-body);
@@ -505,31 +498,9 @@
             });
         }
 
-        const themeToggle = document.getElementById('theme-toggle');
-        const sunIcon = '<i class="fas fa-sun"></i>';
-        const moonIcon = '<i class="fas fa-moon"></i>';
-
-        // Check for saved theme preference
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        themeToggle.innerHTML = currentTheme === 'light' ? moonIcon : sunIcon;
-
-        themeToggle.addEventListener('click', () => {
-            let theme = document.documentElement.getAttribute('data-theme');
-            let newTheme = theme === 'light' ? 'dark' : 'light';
-
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-
-            // Toggle icon
-            themeToggle.innerHTML = newTheme === 'light' ? moonIcon : sunIcon;
-
-            // Add a little pop effect
-            themeToggle.style.transform = 'scale(1.2) rotate(180deg)';
-            setTimeout(() => {
-                themeToggle.style.transform = '';
-            }, 300);
-        });
+        // Force Light Theme (Neobrutalism)
+        localStorage.setItem('theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'light');
     </script>
 </body>
 
