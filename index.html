@@ -224,7 +224,8 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            background: var(--bg);
+            background: #BDF906;
+            /* User requested Lime */
         }
 
         [data-theme="dark"] .card-body {
@@ -249,8 +250,10 @@
         }
 
         .play-btn {
-            background: var(--text);
-            color: var(--primary);
+            background: #D8E267;
+            /* User requested Muted Lime */
+            color: var(--text);
+            /* Teal Text for contrast */
             border: none;
             padding: 15px;
             font-family: var(--font-display);
@@ -266,8 +269,9 @@
 
 
         .game-card:hover .play-btn {
-            background: var(--primary);
-            color: var(--text);
+            background: var(--text);
+            /* Teal on hover */
+            color: var(--primary);
             box-shadow: 4px 4px 0px var(--text);
             transform: translate(-2px, -2px);
         }
