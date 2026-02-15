@@ -4,7 +4,8 @@ import sqlite3
 import subprocess
 import time
 import threading
-from mp3_downloader import process_url
+
+app = Flask(__name__)
 
 # Check if running on Vercel
 IS_VERCEL = "VERCEL" in os.environ
@@ -171,9 +172,12 @@ def hockey():
 def tic_tac_toe():
     return render_template('tic-tac-toe.html')
 
-# Vercel needs the 'app' object, but we wrap the init logic
+# Vercel needs the 'app' object
+# Ensure directories exist
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
+if not os.path.exists(ENGINES_FOLDER):
+    os.makedirs(ENGINES_FOLDER)
 
 init_db()
 
