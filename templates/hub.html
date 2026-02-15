@@ -197,7 +197,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--card-color, #eee);
+            background: var(--text);
+            /* Teal Header */
             height: 150px;
             position: relative;
         }
@@ -208,8 +209,10 @@
 
         .game-icon {
             font-size: 4rem;
-            filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.2));
+            filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.5));
             transition: transform 0.2s;
+            color: var(--primary);
+            /* Lime Icon */
         }
 
         .game-card:hover .game-icon {
@@ -246,8 +249,8 @@
         }
 
         .play-btn {
-            background: #000;
-            color: #fff;
+            background: var(--text);
+            color: var(--primary);
             border: none;
             padding: 15px;
             font-family: var(--font-display);
@@ -257,18 +260,16 @@
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s;
-            border: 2px solid #000;
+            border: 2px solid var(--text);
         }
 
-        [data-theme="dark"] .play-btn {
-            background: #fff;
-            color: #000;
-            border-color: #fff;
-        }
+
 
         .game-card:hover .play-btn {
-            background: var(--card-color);
-            color: #000;
+            background: var(--primary);
+            color: var(--text);
+            box-shadow: 4px 4px 0px var(--text);
+            transform: translate(-2px, -2px);
         }
 
         /* Toast Notification */
@@ -276,10 +277,9 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: #000;
-            color: #fff;
-            padding: 15px 30px;
             border: var(--border-width) solid var(--border-color);
+            background: var(--text);
+            color: var(--primary);
             font-family: var(--font-display);
             font-size: 0.8rem;
             z-index: 10000;
