@@ -339,6 +339,10 @@
             animation-delay: 0.8s, 3.5s;
         }
 
+        .game-card:nth-child(9) {
+            animation-delay: 0.9s, 4s;
+        }
+
         .game-card:hover {
             transform: translateY(-15px) scale(1.03) !important;
             border-color: var(--color, var(--primary));
@@ -462,6 +466,11 @@
             --color: #a000f0;
             --glow: rgba(160, 0, 240, 0.3);
         }
+
+        .color-c4 {
+            --color: #ffd700;
+            --glow: rgba(255, 215, 0, 0.3);
+        }
     </style>
 </head>
 
@@ -555,6 +564,14 @@
             <div class="game-icon">❌</div>
             <div class="game-name">NEON TIC-TAC-TOE</div>
             <div class="game-desc">The ultimate logic battle. Can you defeat the Elite Minimax AI?</div>
+            <div class="play-btn">COIN START</div>
+        </a>
+
+        <!-- Connect Four -->
+        <a href="/game/connect-four" class="game-card color-c4">
+            <div class="game-icon">🔵</div>
+            <div class="game-name">CONNECT FOUR</div>
+            <div class="game-desc">Strategic depth and gravity. Aim for four in a row against the machine.</div>
             <div class="play-btn">COIN START</div>
         </a>
     </div>

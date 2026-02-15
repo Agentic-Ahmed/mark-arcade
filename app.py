@@ -172,6 +172,10 @@ def hockey():
 def tic_tac_toe():
     return render_template('tic-tac-toe.html')
 
+@app.route('/game/connect-four')
+def connect_four():
+    return render_template('connect-four.html')
+
 # Vercel needs the 'app' object
 # Ensure directories exist
 if not os.path.exists(DOWNLOAD_FOLDER):
